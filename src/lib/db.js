@@ -26,7 +26,7 @@ export async function getDatabase() {
      throw new Error("Database connection not initialized. Check MONGODB_URI.");
   }
   const client = await clientPromise;
-  return client.db();
+  return client.db('care_connect');
 }
 
 export default clientPromise;

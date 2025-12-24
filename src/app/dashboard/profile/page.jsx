@@ -94,8 +94,12 @@ const ProfilePage = () => {
 
         <h2 className="text-xl font-bold text-gray-900">{userData.name}</h2>
         <p className="text-gray-500">{userData.email}</p>
-        <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full uppercase">
-          Client Account
+        <span className={`inline-block mt-2 px-3 py-1 text-xs font-semibold rounded-full uppercase ${
+          session?.user?.role === 'admin' 
+            ? 'bg-purple-100 text-purple-700' 
+            : 'bg-green-100 text-green-700'
+        }`}>
+          {session?.user?.role === 'admin' ? 'Admin Account' : 'Client Account'}
         </span>
       </div>
 

@@ -18,3 +18,44 @@ export async function GET(request) {
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
+
+export async function POST(req) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const { serviceId, serviceName, date, time, address, price, duration, image } = body;
+
+    // Basic validation
+    if (!serviceId || !date || !address) {
+       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
+    }
+
+    const bookingData = {
+      userEmail: session.user.email,
+      userName: session.user.name,
+      serviceId,
+      service: serviceName, // Storing name for easier display
+      date: new Date(date),
+      time,
+      address,
+      price,
+      duration,
+      image,
+      status: 'Pending',
+      paymentStatus: 'Unpaid',
+      createdAt: new Date()
+    };
+
+    const result = await Booking.create(bookingData);
+
+    return NextResponse.json({ message: "Booking created successfully", bookingId: result.insertedId }, { status: 201 });
+  } catch (error) {
+    console.error("Booking Error:", error);
+    return NextResponse.json({ message: "Error creating booking" }, { status: 500 });
+  }
+}

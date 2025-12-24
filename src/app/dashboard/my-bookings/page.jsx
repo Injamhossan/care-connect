@@ -49,7 +49,6 @@ const MyBookingsPage = () => {
             >
               {/* Image */}
               <div className="w-full md:w-48 h-48 md:h-auto bg-gray-200 relative">
-                 {/* Fallback image logic needed or assume 'image' is in booking */}
                  {booking.image ? (
                      <Image src={booking.image} alt={booking.service} fill className="object-cover" />
                  ) : (
@@ -64,38 +63,70 @@ const MyBookingsPage = () => {
                 <div>
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-lg font-bold text-gray-900">{booking.service}</h3>
-                    <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                      booking.status === 'Confirmed' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-                    }`}>
-                      {booking.status}
-                    </span>
+                    <div className="flex gap-2">
+                      {/* Payment Status Badge */}
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${
+                        booking.paymentStatus === 'Paid' 
+                          ? 'bg-blue-50 text-blue-700 border-blue-100' 
+                          : 'bg-gray-50 text-gray-600 border-gray-200'
+                      }`}>
+                        {booking.paymentStatus || 'Unpaid'}
+                      </span>
+
+                      {/* Main Status Badge */}
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                        booking.status === 'Confirmed' ? 'bg-green-100 text-green-700' : 
+                        booking.status === 'Completed' ? 'bg-gray-100 text-gray-700' :
+                        booking.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                        'bg-orange-100 text-orange-700'
+                      }`}>
+                        {booking.status}
+                      </span>
+                    </div>
                   </div>
                   
-                  <div className="space-y-2 text-sm text-gray-500 mt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 text-sm text-gray-500 mt-4">
                     <div className="flex items-center gap-2">
-                      <HiOutlineCalendar className="text-lg" />
+                      <HiOutlineCalendar className="text-lg text-[#389482]" />
                       <span>{new Date(booking.date).toLocaleDateString()}</span>
                     </div>
                     {booking.time && (
                       <div className="flex items-center gap-2">
-                        <HiOutlineClock className="text-lg" />
+                        <HiOutlineClock className="text-lg text-[#389482]" />
                         <span>{booking.time}</span>
                       </div>
                     )}
+                    {booking.duration && (
+                       <div className="flex items-center gap-2">
+                         <HiOutlineClock className="text-lg text-[#389482]" />
+                         <span>Duration: {booking.duration}</span>
+                       </div>
+                    )}
                     {booking.address && (
-                      <div className="flex items-center gap-2">
-                        <HiOutlineLocationMarker className="text-lg" />
-                        <span>{booking.address}</span>
+                      <div className="flex items-center gap-2 sm:col-span-2">
+                        <HiOutlineLocationMarker className="text-lg text-[#389482]" />
+                        <span className="truncate">{booking.address}</span>
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center">
-                   <span className="font-bold text-lg text-[#389482]">{booking.price}</span>
-                   <button className="text-sm text-gray-500 hover:text-[#389482] font-medium">
-                     View Details
-                   </button>
+                   <div>
+                      <p className="text-xs text-gray-400">Total Cost</p>
+                      <span className="font-bold text-lg text-[#389482]">{booking.price}</span>
+                   </div>
+                   
+                   <div className="flex gap-3">
+                      {booking.status === 'Confirmed' && booking.paymentStatus !== 'Paid' && (
+                         <button className="px-4 py-2 text-sm font-medium text-white bg-[#389482] rounded-lg hover:bg-[#2f7f70] transition-colors">
+                           Pay Now
+                         </button>
+                      )}
+                      <button className="text-sm text-gray-500 hover:text-[#389482] font-medium">
+                        View Details
+                      </button>
+                   </div>
                 </div>
               </div>
             </div>

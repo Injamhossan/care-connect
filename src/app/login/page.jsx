@@ -37,7 +37,7 @@ const LoginPage = () => {
         return;
       }
 
-      router.push("/dashboard"); // Redirect to home or dashboard
+      router.push("/dashboard");
     } catch (error) {
       setError("Something went wrong");
     }
@@ -87,7 +87,7 @@ const LoginPage = () => {
             </p>
             
             {error && (
-              <div className="p-3 mb-4 text-sm text-red-500 bg-red-50 rounded-lg">
+              <div className="p-3 mb-4 text-sm text-red-500 rounded-lg bg-red-50">
                 {error}
               </div>
             )}
@@ -190,8 +190,6 @@ const LoginPage = () => {
             </p>
           </div>
         </motion.div>
-
-        {/* Right Section - Image/Color */}
         {/* Right Section - Image/Color */}
         <motion.div 
           initial={{ x: 50, opacity: 0 }}
