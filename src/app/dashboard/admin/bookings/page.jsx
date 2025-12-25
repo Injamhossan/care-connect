@@ -55,7 +55,7 @@ const AdminBookingsPage = () => {
   };
 
   if (loading) return (
-    <div className="flex items-center justify-center min-h-[400px]">
+    <div className="flex items-center justify-center min-h-100">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#389482]"></div>
     </div>
   );
@@ -79,6 +79,7 @@ const AdminBookingsPage = () => {
                 <th className="p-5 font-semibold text-gray-600 text-sm">Customer</th>
                 <th className="p-5 font-semibold text-gray-600 text-sm">Schedule</th>
                 <th className="p-5 font-semibold text-gray-600 text-sm">Price</th>
+                <th className="p-5 font-semibold text-gray-600 text-sm">Payment</th>
                 <th className="p-5 font-semibold text-gray-600 text-sm">Status</th>
                 <th className="p-5 font-semibold text-gray-600 text-sm">Actions</th>
               </tr>
@@ -119,6 +120,18 @@ const AdminBookingsPage = () => {
                   </td>
                   <td className="p-5 font-bold text-[#389482]">
                     ${booking.price}
+                  </td>
+                  <td className="p-5">
+                     <div className="flex flex-col gap-1">
+                        <span className={`px-2 py-0.5 text-xs font-semibold rounded-full w-fit ${
+                           booking.paymentStatus === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                        }`}>
+                           {booking.paymentStatus || 'Unpaid'}
+                        </span>
+                        {booking.paymentInfo && (
+                           <span className="text-[10px] text-gray-400">ID: {booking.paymentInfo.transactionId}</span>
+                        )}
+                     </div>
                   </td>
                   <td className="p-5">
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(booking.status)}`}>

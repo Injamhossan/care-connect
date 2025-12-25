@@ -41,19 +41,6 @@ export default function BookServicePage({ params }) {
 
     const fetchService = async () => {
       try {
-        // We can reuse the public API or simply fetch by ID if we had an endpoint. 
-        // Since we don't have a dedicated public API for single service by ID easily accessible from client without overhead,
-        // let's assume we fetch from the list or a dedicated endpoint.
-        // For now, let's fetch all services and find one, OR create a specific endpoint.
-        // Let's rely on the fact that we can just fetch the service details if we have an API.
-        // Wait, we don't have a public GET /api/services/[id]. 
-        // Let's fetch ALL services temporarily or assume we can create a quick server action/api.
-        
-        // Better: Create a simple GET endpoint for service details to make this clean.
-        // But for speed, let's use the one we created for admin/services if accessible or create /api/services/[id].
-        
-        // Let's Try finding it via the public services list which we used in the main page.
-        // Or better yet, I will create a dedicated API route for single service fetching now.
         const res = await fetch(`/api/service-details?id=${id}`); 
         if (res.ok) {
            const data = await res.json();
@@ -89,7 +76,30 @@ export default function BookServicePage({ params }) {
      return hours * service.startingPrice;
   };
 
-  const handleSubmit = async (e) => {
+  // Payment State
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentData, setPaymentData] = useState({
+    cardNumber: "",
+    expiry: "",
+    cvv: "",
+    name: ""
+  });
+
+  const handlePaymentChange = (e) => {
+    let value = e.target.value;
+    if (e.target.name === 'cardNumber') {
+       value = value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ').trim().slice(0, 19);
+    }
+    if (e.target.name === 'expiry') {
+       value = value.replace(/\D/g, '').replace(/(\d{2})(?=\d)/g, '$1/').slice(0, 5);
+    }
+    if (e.target.name === 'cvv') {
+       value = value.replace(/\D/g, '').slice(0, 3);
+    }
+    setPaymentData({ ...paymentData, [e.target.name]: value });
+  };
+
+  const handleBookingSubmit = async (e) => {
     e.preventDefault();
     if (!session) {
       toast.error("Please login to book a service");
@@ -101,9 +111,19 @@ export default function BookServicePage({ params }) {
       toast.error("Admins cannot book services!");
       return;
     }
-    setSubmitting(true);
+    
+    // Open Payment Modal
+    setShowPaymentModal(true);
+  };
 
-    try {
+  const confirmPaymentAndBooking = async (e) => {
+     e.preventDefault();
+     setSubmitting(true);
+
+     // Simulate Payment Processing
+     await new Promise(resolve => setTimeout(resolve, 1500)); 
+
+     try {
       const bookingPayload = {
         serviceId: service._id,
         serviceName: service.title,
@@ -112,7 +132,14 @@ export default function BookServicePage({ params }) {
         time: formData.time,
         address: formData.address,
         duration: formData.duration,
-        price: calculateTotal(), // Simple calc
+        price: calculateTotal(),
+        notes: formData.notes,
+        paymentInfo: {
+            status: 'Paid',
+            method: 'Credit Card',
+            transactionId: 'TXN' + Math.floor(Math.random() * 100000000),
+            date: new Date()
+        }
       };
 
       const res = await fetch("/api/bookings", {
@@ -122,14 +149,15 @@ export default function BookServicePage({ params }) {
       });
 
       if (res.ok) {
-        toast.success("Booking Request Sent!");
+        toast.success("Payment Successful! Booking Request Sent.");
+        setShowPaymentModal(false);
         setTimeout(() => router.push("/dashboard/my-bookings"), 1500);
       } else {
          toast.error("Failed to book service");
+         setSubmitting(false);
       }
     } catch (error) {
        toast.error("Something went wrong");
-    } finally {
        setSubmitting(false);
     }
   };
@@ -138,23 +166,23 @@ export default function BookServicePage({ params }) {
   if (!service) return <div className="p-8 text-center">Service not found</div>;
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="relative max-w-4xl mx-auto">
       <Toaster position="top-right" />
-      <h1 className="text-2xl font-bold mb-6 text-gray-900">Book Service</h1>
+      <h1 className="mb-6 text-2xl font-bold text-gray-900">Book Service</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         
         {/* Left: Form */}
-        <div className="md:col-span-2 space-y-6">
-           <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-              <h2 className="font-semibold text-lg mb-4 text-gray-800">Booking Details</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-6 md:col-span-2">
+           <div className="p-6 bg-white border border-gray-100 shadow-sm rounded-2xl">
+              <h2 className="mb-4 text-lg font-semibold text-gray-800">Booking Details</h2>
+              <form onSubmit={handleBookingSubmit} className="space-y-4">
                  
                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
                        <label className="text-sm font-medium text-gray-700">Date</label>
                        <div className="relative">
-                          <HiOutlineCalendar className="absolute left-3 top-3 text-gray-400 text-lg" />
+                          <HiOutlineCalendar className="absolute text-lg text-gray-400 left-3 top-3" />
                           <input 
                             type="date" 
                             name="date"
@@ -170,7 +198,7 @@ export default function BookServicePage({ params }) {
                     <div className="space-y-1">
                        <label className="text-sm font-medium text-gray-700">Time</label>
                        <div className="relative">
-                          <HiOutlineClock className="absolute left-3 top-3 text-gray-400 text-lg" />
+                          <HiOutlineClock className="absolute text-lg text-gray-400 left-3 top-3" />
                           <input 
                             type="time" 
                             name="time"
@@ -202,7 +230,7 @@ export default function BookServicePage({ params }) {
                  <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">Address</label>
                     <div className="relative">
-                       <HiOutlineLocationMarker className="absolute left-3 top-3 text-gray-400 text-lg" />
+                       <HiOutlineLocationMarker className="absolute text-lg text-gray-400 left-3 top-3" />
                        <textarea 
                          name="address"
                          required
@@ -229,10 +257,9 @@ export default function BookServicePage({ params }) {
 
                  <button 
                    type="submit" 
-                   disabled={submitting}
-                   className="w-full bg-[#389482] text-white font-bold py-3 rounded-xl hover:bg-[#2f7f70] transition-colors shadow-lg shadow-[#389482]/20 disabled:opacity-70 disabled:cursor-not-allowed"
+                   className="w-full bg-[#389482] text-white font-bold py-3 rounded-xl hover:bg-[#2f7f70] transition-colors shadow-lg shadow-[#389482]/20"
                  >
-                   {submitting ? "Processing..." : "Confirm Booking Request"}
+                   Proceed to Payment
                  </button>
 
               </form>
@@ -241,11 +268,11 @@ export default function BookServicePage({ params }) {
 
         {/* Right: Summary */}
         <div className="space-y-6">
-           <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm sticky top-24">
-              <h3 className="font-bold text-gray-800 mb-4">Order Summary</h3>
+           <div className="sticky p-6 bg-white border border-gray-100 shadow-sm rounded-2xl top-24">
+              <h3 className="mb-4 font-bold text-gray-800">Order Summary</h3>
               
               <div className="flex gap-4 mb-6">
-                 <div className="w-20 h-20 rounded-lg overflow-hidden relative bg-gray-100 shrink-0">
+                 <div className="relative w-20 h-20 overflow-hidden bg-gray-100 rounded-lg shrink-0">
                     <Image src={service.image} alt={service.title} fill className="object-cover" />
                  </div>
                  <div>
@@ -254,7 +281,7 @@ export default function BookServicePage({ params }) {
                  </div>
               </div>
 
-              <div className="space-y-3 py-4 border-t border-dashed border-gray-200">
+              <div className="py-4 space-y-3 border-t border-gray-200 border-dashed">
                  <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Service Rate</span>
                     <span className="font-medium">${service.startingPrice}/hr</span>
@@ -263,24 +290,105 @@ export default function BookServicePage({ params }) {
                     <span className="text-gray-500">Duration</span>
                     <span className="font-medium">{formData.duration}</span>
                  </div>
-                 {/* <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Subtotal</span>
-                    <span className="font-medium">${calculateTotal()}</span>
-                 </div> */}
               </div>
 
-              <div className="pt-4 border-t border-gray-100 flex justify-between items-center">
+              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                  <span className="font-bold text-gray-900">Total Estimate</span>
                  <span className="font-bold text-xl text-[#389482]">${calculateTotal()}</span>
               </div>
               
-              <p className="text-xs text-center text-gray-400 mt-6">
-                 *Final price may vary based on specific requirements. You will not be charged until the booking is confirmed.
+              <p className="mt-6 text-xs text-center text-gray-400">
+                 *Final price may vary based on specific requirements. Advance payment required.
               </p>
            </div>
         </div>
       
       </div>
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+           <div className="w-full max-w-md p-6 space-y-6 bg-white shadow-2xl rounded-2xl">
+              <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                 <h3 className="flex items-center gap-2 text-xl font-bold text-gray-900">
+                    <HiOutlineCurrencyDollar className="text-[#389482] text-2xl" />
+                    Secure Payment
+                 </h3>
+                 <button onClick={() => setShowPaymentModal(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 border border-blue-100 bg-blue-50 rounded-xl">
+                 <span className="font-medium text-blue-800">Total Amount</span>
+                 <span className="text-xl font-bold text-blue-800">${calculateTotal()}</span>
+              </div>
+
+              <form onSubmit={confirmPaymentAndBooking} className="space-y-4">
+                 <div className="space-y-1">
+                    <label className="text-xs font-bold text-gray-500 uppercase">Card Holder Name</label>
+                    <input 
+                      required 
+                      name="name"
+                      placeholder="John Doe"
+                      value={paymentData.name}
+                      onChange={handlePaymentChange}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#389482]/20 outline-none"
+                    />
+                 </div>
+                 <div className="space-y-1">
+                    <label className="text-xs font-bold text-gray-500 uppercase">Card Number</label>
+                    <input 
+                      required 
+                      name="cardNumber"
+                      placeholder="0000 0000 0000 0000"
+                      maxLength="19"
+                      value={paymentData.cardNumber}
+                      onChange={handlePaymentChange}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#389482]/20 outline-none font-mono"
+                    />
+                 </div>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                       <label className="text-xs font-bold text-gray-500 uppercase">Expiry</label>
+                       <input 
+                         required 
+                         name="expiry"
+                         placeholder="MM/YY"
+                         maxLength="5"
+                         value={paymentData.expiry}
+                         onChange={handlePaymentChange}
+                         className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#389482]/20 outline-none font-mono text-center"
+                       />
+                    </div>
+                    <div className="space-y-1">
+                       <label className="text-xs font-bold text-gray-500 uppercase">CVV</label>
+                       <input 
+                         required 
+                         type="password"
+                         name="cvv"
+                         placeholder="123"
+                         maxLength="3"
+                         value={paymentData.cvv}
+                         onChange={handlePaymentChange}
+                         className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#389482]/20 outline-none font-mono text-center"
+                       />
+                    </div>
+                 </div>
+
+                 <button 
+                   type="submit" 
+                   disabled={submitting}
+                   className="w-full bg-[#389482] text-white font-bold py-3.5 rounded-xl hover:bg-[#2f7f70] transition-colors shadow-lg shadow-[#389482]/20 mt-4 disabled:opacity-70 flex items-center justify-center gap-2"
+                 >
+                   {submitting ? (
+                     <>Processing Payment...</>
+                   ) : (
+                     <>Pay ${calculateTotal()} & Confirm</>
+                   )}
+                 </button>
+              </form>
+           </div>
+        </div>
+      )}
     </div>
   );
 }

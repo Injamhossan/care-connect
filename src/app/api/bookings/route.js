@@ -32,7 +32,7 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
-    const { serviceId, serviceName, date, time, address, price, duration, image } = body;
+    const { serviceId, serviceName, date, time, address, price, duration, image, notes, paymentInfo } = body;
 
     // Basic validation
     if (!serviceId || !date || !address) {
@@ -43,15 +43,17 @@ export async function POST(req) {
       userEmail: session.user.email,
       userName: session.user.name,
       serviceId,
-      service: serviceName, // Storing name for easier display
+      service: serviceName,
       date: new Date(date),
       time,
       address,
       price,
       duration,
       image,
+      notes,
       status: 'Pending',
-      paymentStatus: 'Unpaid',
+      paymentStatus: paymentInfo ? 'Paid' : 'Unpaid',
+      paymentInfo: paymentInfo || null,
       createdAt: new Date()
     };
 
