@@ -2,12 +2,12 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  HiOutlineHome, 
-  HiOutlineUserGroup, 
-  HiOutlineClipboardList, 
-  HiOutlineCalendar, 
-  HiOutlineLogout 
+import {
+  HiOutlineHome,
+  HiOutlineUserGroup,
+  HiOutlineClipboardList,
+  HiOutlineCalendar,
+  HiOutlineLogout
 } from "react-icons/hi";
 import { signOut } from "next-auth/react";
 

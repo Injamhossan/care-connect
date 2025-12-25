@@ -26,6 +26,10 @@ export async function POST(req) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  if (session.user.role === 'admin') {
+    return NextResponse.json({ message: "Admins cannot create bookings" }, { status: 403 });
+  }
+
   try {
     const body = await req.json();
     const { serviceId, serviceName, date, time, address, price, duration, image } = body;

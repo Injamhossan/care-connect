@@ -33,13 +33,11 @@ export async function PUT(request) {
 
   try {
     const body = await request.json();
-    const { name, contact } = body; // Allow updating name and phone for now
+    const { name, contact } = body;
 
     const updateResult = await User.update(session.user.email, { name, contact });
 
     if (updateResult.modifiedCount === 0) {
-       // This might happen if new data is same as old, but strictly speaking it's not an error.
-       // However, if matchedCount is 0, then user not found.
        if (updateResult.matchedCount === 0) {
          return NextResponse.json({ message: "User not found" }, { status: 404 });
        }

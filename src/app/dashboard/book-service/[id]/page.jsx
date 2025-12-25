@@ -7,8 +7,6 @@ import { toast, Toaster } from "sonner";
 import { HiOutlineCalendar, HiOutlineClock, HiOutlineLocationMarker, HiOutlineCurrencyDollar } from "react-icons/hi";
 
 export default function BookServicePage({ params }) {
-  // Try to unwrap params if it's a promise (Next.js 15+ changes), though client components usually receive resolved params.
-  // Ideally, use React.use() hook if available, but safe access is fine.
   const [unwrappedParams, setUnwrappedParams] = useState(null);
 
   useEffect(() => {
@@ -73,6 +71,14 @@ export default function BookServicePage({ params }) {
     fetchService();
   }, [id]);
 
+  // Prevent Admin Access
+  useEffect(() => {
+    if (session?.user?.role === 'admin') {
+      toast.error("Admins cannot book services. Please login as a user.");
+      router.push("/dashboard"); // Redirect to dashboard or home
+    }
+  }, [session, router]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -88,6 +94,11 @@ export default function BookServicePage({ params }) {
     if (!session) {
       toast.error("Please login to book a service");
       router.push("/login");
+      return;
+    }
+
+    if (session?.user?.role === 'admin') {
+      toast.error("Admins cannot book services!");
       return;
     }
     setSubmitting(true);
