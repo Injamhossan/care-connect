@@ -41,7 +41,7 @@ export default function BookServicePage({ params }) {
 
     const fetchService = async () => {
       try {
-        const res = await fetch(`/api/service-details?id=${id}`); 
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/service-details?id=${id}`); 
         if (res.ok) {
            const data = await res.json();
            setService(data);
@@ -142,7 +142,7 @@ export default function BookServicePage({ params }) {
         }
       };
 
-      const res = await fetch("/api/bookings", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bookingPayload),

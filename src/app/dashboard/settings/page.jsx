@@ -37,7 +37,7 @@ const SettingsPage = () => {
     
     setLoadingPass(true);
     try {
-        const res = await fetch("/api/user/change-password", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/change-password`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
@@ -70,7 +70,7 @@ const SettingsPage = () => {
 
     setDeleting(true);
     try {
-        const res = await fetch("/api/user/delete-account", { method: "DELETE" });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/delete-account`, { method: "DELETE" });
         const data = await res.json();
         
         if (res.ok) {

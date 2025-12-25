@@ -23,8 +23,8 @@ export default function DashboardPage() {
         // Admin Data Fetch
         try {
           const [usersRes, bookingsRes] = await Promise.all([
-             fetch('/api/admin/users'),
-             fetch('/api/admin/bookings')
+             fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/users`),
+             fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/bookings`)
           ]);
 
           if (usersRes.ok && bookingsRes.ok) {
@@ -49,7 +49,7 @@ export default function DashboardPage() {
       } else {
         // User Data Fetch
         try {
-          const res = await fetch('/api/bookings');
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`);
           if (res.ok) {
             const bookings = await res.json();
             

@@ -19,7 +19,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await fetch("/api/user/update");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/update`);
         if (res.ok) {
           const data = await res.json();
           setUserData({
@@ -43,7 +43,7 @@ const ProfilePage = () => {
 
   const handleUpdate = async () => {
     try {
-      const res = await fetch("/api/user/update", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

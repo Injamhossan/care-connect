@@ -10,7 +10,7 @@ const MyBookingsPage = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await fetch("/api/bookings");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`);
         if (res.ok) {
           const data = await res.json();
           setBookings(data);

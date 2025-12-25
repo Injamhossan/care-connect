@@ -10,7 +10,7 @@ const AdminUsersPage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("/api/admin/users");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/users`);
         if (res.ok) {
           const data = await res.json();
           setUsers(data);
