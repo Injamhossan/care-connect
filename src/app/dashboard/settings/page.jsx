@@ -199,10 +199,16 @@ const SettingsPage = () => {
           )}
 
            <button 
-            onClick={() => setIsDeleteModalOpen(true)}
-            className="w-full text-left px-4 py-3 rounded-xl border border-red-200 hover:bg-red-50 transition-colors flex justify-between items-center group"
+            onClick={() => session?.user?.role !== 'admin' && setIsDeleteModalOpen(true)}
+            disabled={session?.user?.role === 'admin'}
+            className={`w-full text-left px-4 py-3 rounded-xl border transition-colors flex justify-between items-center group ${
+                session?.user?.role === 'admin'
+                ? "border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed" 
+                : "border-red-200 hover:bg-red-50 cursor-pointer"
+            }`}
            >
-            <span className="font-medium text-red-600">Delete Account</span>
+            <span className={`font-medium ${session?.user?.role === 'admin' ? "text-gray-400" : "text-red-600"}`}>Delete Account</span>
+            {session?.user?.role === 'admin' && <span className="text-xs text-gray-400 font-normal">(Restricted for Admins)</span>}
           </button>
         </div>
       </div>
