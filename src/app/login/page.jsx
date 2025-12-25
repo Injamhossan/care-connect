@@ -138,7 +138,7 @@ const LoginPage = () => {
                     Password
                   </label>
                   <Link
-                    href="#"
+                    href="/forgot-password"
                     className="text-xs font-semibold text-[#389482] hover:text-[#389482]-hover"
                   >
                     Forgot password?

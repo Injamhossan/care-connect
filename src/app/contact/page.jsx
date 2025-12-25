@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'motion/react';
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaPaperPlane } from 'react-icons/fa';
 import { BiMessageDetail } from "react-icons/bi";
@@ -118,9 +119,9 @@ const ContactPage = () => {
                              <p className="mb-6 text-sm leading-relaxed text-emerald-100">
                                  Check out our Frequently Asked Questions section to find answers to common queries.
                              </p>
-                             <button className="px-5 py-2 bg-white text-[#389482] rounded-lg text-sm font-bold hover:bg-emerald-50 transition-colors">
+                             <Link href="/faq" className="px-5 py-2 inline-block bg-white text-[#389482] rounded-lg text-sm font-bold hover:bg-emerald-50 transition-colors">
                                  Visit FAQ
-                             </button>
+                             </Link>
                         </motion.div>
                     </div>
 

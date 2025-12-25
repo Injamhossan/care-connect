@@ -23,7 +23,7 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="flex bg-gray-50/50 min-h-[calc(100vh-80px)]">
+    <div className="flex flex-col md:flex-row bg-gray-50/50 min-h-[calc(100vh-80px)]">
       <Sidebar />
       <main className="flex-1 p-6 md:p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto">

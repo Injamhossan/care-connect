@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'motion/react';
 import { FaHandHoldingHeart, FaUsers, FaStar, FaShieldAlt, FaCheckCircle, FaHeart } from 'react-icons/fa';
 import AboutHero from '../../assets/hand.jpg'; // Reusing this as it's a good generic "care" image
@@ -77,7 +78,7 @@ const AboutPage = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}
-                        className="relative h-125 rounded-3xl overflow-hidden shadow-2xl"
+                        className="relative overflow-hidden shadow-2xl h-125 rounded-3xl"
                     >
                         <Image
                             src={AboutHero}
@@ -200,12 +201,12 @@ const AboutPage = () => {
                                 Whether you are looking for care or want to become a caregiver, we are excited to have you as part of our community.
                             </p>
                             <div className="flex flex-wrap gap-4">
-                                <button className="px-8 py-3 bg-[#389482] text-white rounded-full font-bold hover:bg-[#2f7f70] transition-colors">
+                                <Link href="/register" className="px-8 py-3 bg-[#389482] text-white rounded-full font-bold hover:bg-[#2f7f70] transition-colors">
                                     Become a Caregiver
-                                </button>
-                                <button className="px-8 py-3 font-bold text-white transition-colors rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm">
+                                </Link>
+                                <Link href="/contact" className="px-8 py-3 font-bold text-white transition-colors rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm">
                                     Contact Us
-                                </button>
+                                </Link>
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
