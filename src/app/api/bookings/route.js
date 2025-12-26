@@ -39,6 +39,14 @@ export async function POST(req) {
        return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
 
+    // Validate structured address
+    if (typeof address === 'object') {
+        const { division, district, city, area, details } = address;
+        if (!division || !district || !city || !area || !details) {
+            return NextResponse.json({ message: "Incomplete address details" }, { status: 400 });
+        }
+    }
+
     const bookingData = {
       userEmail: session.user.email,
       userName: session.user.name,

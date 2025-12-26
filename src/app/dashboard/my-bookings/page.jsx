@@ -105,7 +105,11 @@ const MyBookingsPage = () => {
                     {booking.address && (
                       <div className="flex items-center gap-2 sm:col-span-2">
                         <HiOutlineLocationMarker className="text-lg text-[#389482]" />
-                        <span className="truncate">{booking.address}</span>
+                        <span className="truncate">
+                          {typeof booking.address === 'object' 
+                            ? `${booking.address.details}, ${booking.address.area}, ${booking.address.city}, ${booking.address.division}`
+                            : booking.address}
+                        </span>
                       </div>
                     )}
                   </div>

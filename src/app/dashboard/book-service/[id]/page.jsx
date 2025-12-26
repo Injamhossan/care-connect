@@ -4,7 +4,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast, Toaster } from "sonner";
-import { HiOutlineCalendar, HiOutlineClock, HiOutlineLocationMarker, HiOutlineCurrencyDollar } from "react-icons/hi";
+import { HiOutlineCalendar, HiOutlineClock, HiOutlineLocationMarker, HiOutlineCurrencyDollar, HiOutlineOfficeBuilding } from "react-icons/hi";
+
+const DIVISIONS = ["Barisal", "Chittagong", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"];
 
 export default function BookServicePage({ params }) {
   const [unwrappedParams, setUnwrappedParams] = useState(null);
@@ -30,7 +32,11 @@ export default function BookServicePage({ params }) {
   const [formData, setFormData] = useState({
     date: "",
     time: "",
-    address: "",
+    division: "",
+    district: "",
+    city: "",
+    area: "",
+    address: "", // Specific address/road/house
     duration: "4 hours", // Default
     notes: ""
   });
@@ -130,7 +136,14 @@ export default function BookServicePage({ params }) {
         image: service.image,
         date: formData.date,
         time: formData.time,
-        address: formData.address,
+        // Store address as an object for detailed location management
+        address: {
+            division: formData.division,
+            district: formData.district,
+            city: formData.city,
+            area: formData.area,
+            details: formData.address // Street/Road/House
+        },
         duration: formData.duration,
         price: calculateTotal(),
         notes: formData.notes,
@@ -226,16 +239,72 @@ export default function BookServicePage({ params }) {
                        <option value="24 hours">24 Hours (Live-in)</option>
                     </select>
                  </div>
+                 
+                 {/* Location Details */}
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                       <label className="text-sm font-medium text-gray-700">Division</label>
+                       <select 
+                          name="division"
+                          required
+                          value={formData.division}
+                          onChange={handleChange}
+                          className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#389482]/20 focus:border-[#389482] outline-none transition-all"
+                       >
+                          <option value="">Select Division</option>
+                          {DIVISIONS.map(div => <option key={div} value={div}>{div}</option>)}
+                       </select>
+                    </div>
+                    <div className="space-y-1">
+                       <label className="text-sm font-medium text-gray-700">District</label>
+                       <input 
+                          type="text"
+                          name="district"
+                          required
+                          placeholder="e.g. Dhaka"
+                          value={formData.district}
+                          onChange={handleChange}
+                          className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#389482]/20 focus:border-[#389482] outline-none transition-all"
+                       />
+                    </div>
+                 </div>
+
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                       <label className="text-sm font-medium text-gray-700">City/Upazila</label>
+                       <input 
+                          type="text"
+                          name="city"
+                          required
+                          placeholder="e.g. Gulshan"
+                          value={formData.city}
+                          onChange={handleChange}
+                          className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#389482]/20 focus:border-[#389482] outline-none transition-all"
+                       />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-sm font-medium text-gray-700">Area/Thana</label>
+                        <input 
+                           type="text"
+                           name="area"
+                           required
+                           placeholder="e.g. Sector 10"
+                           value={formData.area}
+                           onChange={handleChange}
+                           className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#389482]/20 focus:border-[#389482] outline-none transition-all"
+                        />
+                     </div>
+                 </div>
 
                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Address</label>
+                    <label className="text-sm font-medium text-gray-700">Full Address</label>
                     <div className="relative">
                        <HiOutlineLocationMarker className="absolute text-lg text-gray-400 left-3 top-3" />
                        <textarea 
                          name="address"
                          required
-                         placeholder="Full address where service is needed..."
-                         rows="3"
+                         placeholder="House No, Road No, Flat No..."
+                         rows="2"
                          value={formData.address}
                          onChange={handleChange}
                          className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#389482]/20 focus:border-[#389482] outline-none transition-all resize-none"
@@ -290,6 +359,12 @@ export default function BookServicePage({ params }) {
                     <span className="text-gray-500">Duration</span>
                     <span className="font-medium">{formData.duration}</span>
                  </div>
+                 {formData.division && (
+                    <div className="flex justify-between text-sm">
+                       <span className="text-gray-500">Location</span>
+                       <span className="font-medium truncate max-w-[150px]">{formData.area}, {formData.city}, {formData.division}</span>
+                    </div>
+                 )}
               </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-gray-100">
