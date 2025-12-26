@@ -5,6 +5,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "@radix-ui/themes/styles.css";
 import { Theme } from "@radix-ui/themes";
 import AuthProvider from "@/components/auth/AuthProvider";
+import InitialLoader from "@/components/common/InitialLoader";
 
 const plusJakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700"],
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning={true}
       >
         <Theme appearance="light" accentColor="green">
+          <InitialLoader />
           <AuthProvider>
             <Navbar />
             <main className="min-h-screen">{children}</main>

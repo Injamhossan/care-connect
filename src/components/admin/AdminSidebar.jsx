@@ -7,7 +7,8 @@ import {
   HiOutlineUserGroup,
   HiOutlineClipboardList,
   HiOutlineCalendar,
-  HiOutlineLogout
+  HiOutlineLogout,
+  HiOutlineCurrencyDollar
 } from "react-icons/hi";
 import { signOut } from "next-auth/react";
 
@@ -19,6 +20,7 @@ const AdminSidebar = () => {
     { name: "All Users", icon: HiOutlineUserGroup, href: "/admin/all-users" },
     { name: "All Services", icon: HiOutlineClipboardList, href: "/admin/all-services" },
     { name: "All Bookings", icon: HiOutlineCalendar, href: "/admin/all-bookings" },
+    { name: "Payment History", icon: HiOutlineCurrencyDollar, href: "/admin/payment-history" },
   ];
 
   return (

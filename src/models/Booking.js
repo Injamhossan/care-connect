@@ -24,4 +24,11 @@ export class Booking {
     const db = await getDatabase();
     return db.collection("bookings").findOne({ _id: new ObjectId(id) });
   }
+  static async findAllPayments() {
+    const db = await getDatabase();
+    return db.collection("bookings")
+      .find({ "paymentInfo": { $ne: null } })
+      .sort({ "paymentInfo.date": -1 })
+      .toArray();
+  }
 }

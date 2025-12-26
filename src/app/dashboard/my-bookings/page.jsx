@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { HiOutlineCalendar, HiOutlineLocationMarker, HiOutlineClock } from "react-icons/hi";
 import Image from "next/image";
+import Loader from "@/components/common/Loader";
 
 const MyBookingsPage = () => {
   const [bookings, setBookings] = useState([]);
@@ -25,7 +26,11 @@ const MyBookingsPage = () => {
     fetchBookings();
   }, []);
 
-  if (loading) return <div>Loading bookings...</div>;
+  if (loading) return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+         <Loader fullScreen={false} />
+      </div>
+  );
 
   return (
     <div className="space-y-6">
